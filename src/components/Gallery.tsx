@@ -17,11 +17,18 @@ export default function Gallery() {
         {gallery.map((image, index) => {
           return (
             <div key={index}>
-              <div className="w-full h-full overflow-hidden rounded-md shadow-lg shadow-black/[0.3]">
+              <div className="w-full h-full bg-[var(--hover)] overflow-hidden rounded-md shadow-lg shadow-black/[0.3] cursor-pointer">
                 <img
-                  src={`${process.env.NEXT_PUBLIC_APP_URL}/images/${image.name}`}
+                  src={`${
+                    image.name.startsWith("http")
+                      ? image.name
+                      : process.env.NEXT_PUBLIC_APP_URL +
+                        "/images/" +
+                        image.name
+                  }`}
                   alt={image.name}
                   className="w-full h-auto"
+                  loading="lazy"
                 />
               </div>
             </div>

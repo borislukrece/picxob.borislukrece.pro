@@ -29,7 +29,7 @@ export default function MenuLinks() {
                 !gallery && "hidden"
               }`}>
               {grid ? (
-                <i className="fa-solid fa-grid"></i>
+                <i className="fa-solid fa-grip"></i>
               ) : (
                 <i className="fa-solid fa-list"></i>
               )}

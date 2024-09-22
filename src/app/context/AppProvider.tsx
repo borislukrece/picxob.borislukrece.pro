@@ -215,6 +215,25 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                     return [bot];
                   }
                 });
+
+                bot.message.map((i) => {
+                  // Date format YYYY-MM-DD H:i:s
+                  const date = new Date()
+                    .toISOString()
+                    .slice(0, 19)
+                    .replace("T", "");
+                  const image = {
+                    name: i,
+                    date: date,
+                  };
+                  setGallery((prevGallery) => {
+                    if (prevGallery) {
+                      return [image, ...prevGallery];
+                    } else {
+                      return [image];
+                    }
+                  });
+                });
               } else {
                 const msg_error = {
                   token: crypto.randomBytes(16).toString("hex"),

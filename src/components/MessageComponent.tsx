@@ -34,7 +34,7 @@ export default function MessageComponent({ message }: { message?: Message }) {
               {typeof message.message === "string" ? (
                 <>
                   {isBot && message.message === "__error" ? (
-                    <div className="py-1 px-2 bg-red-500">
+                    <div className="py-1 px-4 bg-red-500 rounded-3xl">
                       <span className="text-white">
                         An excepted error occurred while processing the message.
                         Please try again, if the error persists, contact our

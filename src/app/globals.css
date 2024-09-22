@@ -3,25 +3,57 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #e7e7e7;
+  --foreground: #212121;
+  --foreground-nosys: #000000;
+  --menu-background: #ebebeb;
+  --hover: rgba(0, 0, 0, 0.100);
+  --scrollbar-color: #d8d8d8;
+
+  --menu-width: 16rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #212121;
+    --foreground: #b7b7b7;
+    --foreground-nosys: #ffffff;
+    --menu-background: #171717;
+    --hover: rgba(255, 255, 255, 0.025);
+    --scrollbar-color: #323232;
   }
+}
+
+* {
+  -webkit-scrollbar-color: var(--scrollbar-color) transparent;
+  -moz-scrollbar-color: var(--scrollbar-color) transparent;
+  scrollbar-color: var(--scrollbar-color) transparent;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: sans-serif, Arial, Helvetica;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+.my-animate-spin {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }

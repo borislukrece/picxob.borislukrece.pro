@@ -2,6 +2,7 @@
 "use client";
 
 import { useContext } from "react";
+import { CldImage } from "next-cloudinary";
 import { AppContext } from "@/app/context/AppProvider";
 import { Gallery as GalleryInterface } from "@/utils/interface";
 
@@ -27,21 +28,20 @@ export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
           {gallery.map((image, index) => {
             return (
               <button
+                title="Thumbail"
                 type="button"
                 key={index}
                 onClick={() => handleImageClick(image)}>
                 <div className="w-full h-full bg-[var(--hover)] overflow-hidden rounded-md shadow-lg shadow-black/[0.3] cursor-pointer">
-                  <img
-                    src={`${
-                      image.name.startsWith("http")
-                        ? image.name
-                        : process.env.NEXT_PUBLIC_APP_URL +
-                          "/images/" +
-                          image.name
-                    }`}
+                  <CldImage
+                    src={image.name}
                     alt={image.name}
-                    className="w-full h-auto"
-                    loading="lazy"
+                    width="500"
+                    height="500"
+                    crop={{
+                      type: "auto",
+                      source: true,
+                    }}
                   />
                 </div>
               </button>

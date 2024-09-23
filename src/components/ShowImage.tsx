@@ -33,6 +33,7 @@ export default function ShowImage() {
     const link = document.createElement("a");
     link.href = imageUrl;
     link.download = showImg.name;
+    link.target = "_blank";
     link.style.display = "hidden";
     document.body.appendChild(link);
     link.click();

@@ -5,6 +5,7 @@ export interface Message {
 }
 
 export interface Gallery {
+  token: string;
   name: string;
   date: string;
 }

@@ -17,7 +17,7 @@ interface ValueProps {
   menuVisible: boolean;
   grid: boolean;
   setGrid: Dispatch<SetStateAction<boolean>>;
-  sendMessage: (msg: string) => Promise<string | null | undefined>;
+  sendMessage: (msg: string) => Promise<Gallery | null | undefined>;
   messages: Message[] | null;
   setMessages: Dispatch<SetStateAction<Message[] | null>>;
   loadingMessage: boolean;
@@ -124,13 +124,13 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
   const sendMessage = useCallback(
     async (msg: string) => {
       if (!loadingMessage) {
-        let uri: string | null = null;
+        let img: Gallery | null = null;
         try {
           setLoadingMessage(true);
 
           const imageBlob = await query({ inputs: msg });
           if (imageBlob && imageBlob !== undefined) {
-            uri = await new Promise((resolve, reject) => {
+            img = await new Promise((resolve, reject) => {
               const reader = new FileReader();
               reader.readAsDataURL(imageBlob);
 
@@ -145,12 +145,12 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                       headers: {
                         "Content-Type": "application/json",
                       },
-                      body: JSON.stringify({ imageBlob: base64data }),
+                      body: JSON.stringify({ image: base64data }),
                     });
 
                     if (uploadResponse.ok) {
                       const data = await uploadResponse.json();
-                      resolve(data.data.uri);
+                      resolve(data.data.image);
                     } else {
                       const errorText = await uploadResponse.text();
                       reject(
@@ -176,7 +176,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
           console.log(error);
         } finally {
           setLoadingMessage(false);
-          return uri;
+          return img;
         }
       }
     },
@@ -223,7 +223,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                 const bot = {
                   token: crypto.randomBytes(16).toString("hex"),
                   type: "bot",
-                  message: [res],
+                  message: [res.name],
                 };
 
                 setMessages((prevMessages) => {
@@ -235,10 +235,10 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                 });
 
                 bot.message.map((i) => {
-                  const date = new Date().toISOString();
                   const image = {
+                    token: res.token,
                     name: i,
-                    date: date,
+                    date: res.date,
                   };
                   setGallery((prevGallery) => {
                     if (prevGallery) {

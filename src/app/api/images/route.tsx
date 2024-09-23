@@ -1,30 +1,27 @@
 import fs from "fs";
 import path from "path";
+import { Gallery } from "@/utils/interface";
 
 export async function GET() {
   try {
-    const imagesDir = path.join(process.cwd(), "public/images");
-    const files = fs.readdirSync(imagesDir);
+    const dataPath = path.join(process.cwd(), "data", "images.json");
 
-    const images = files.map((file) => {
-      const filePath = path.join(imagesDir, file);
-      const stats = fs.statSync(filePath);
-      return {
-        name: file,
-        date: stats.mtime.toISOString(),
-      };
-    });
-
-    images.sort((a, b) => {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    });
+    let data: Gallery[] = [];
+    if (fs.existsSync(dataPath)) {
+      if (fs.readFileSync(dataPath, "utf8").length > 0) {
+        data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+        data.sort((a, b) => {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        });
+      } else {
+        data = [];
+      }
+    }
 
     return Response.json({
       statusCode: 200,
       message: "Images retrieved successfully",
-      data: {
-        images,
-      },
+      data: { images: data },
     });
   } catch (error) {
     return Response.json({ error: `Failed to get images: ${error}` });

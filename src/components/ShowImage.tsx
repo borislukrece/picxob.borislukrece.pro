@@ -2,8 +2,8 @@
 "use client";
 
 import { AppContext } from "@/app/context/AppProvider";
-import { formatDate, removeParamFromURL } from "@/utils/helpers";
-import { useContext, useState } from "react";
+import { formatDate } from "@/utils/helpers";
+import { useContext, useEffect, useState } from "react";
 
 export default function ShowImage() {
   const { showImg, setShowImg } = useContext(AppContext);
@@ -12,7 +12,6 @@ export default function ShowImage() {
 
   const close = () => {
     setShowImg(null);
-    removeParamFromURL("image");
   };
 
   const handleClickOutside = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -39,6 +38,18 @@ export default function ShowImage() {
     link.click();
     document.body.removeChild(link);
   };
+
+  useEffect(() => {
+    if (showImg) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("image", showImg.name);
+      window.history.replaceState(null, "", url);
+    } else if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("image");
+      window.history.replaceState(null, "", url);
+    }
+  }, [showImg]);
 
   return (
     showImg && (

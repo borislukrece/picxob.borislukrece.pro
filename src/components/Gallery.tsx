@@ -4,14 +4,12 @@
 import { useContext } from "react";
 import { AppContext } from "@/app/context/AppProvider";
 import { Gallery as GalleryInterface } from "@/utils/interface";
-import { addParamToURL } from "@/utils/helpers";
 
 export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
   const { grid, loadingGallery, setShowImg } = useContext(AppContext);
 
   const handleImageClick = (image: GalleryInterface) => {
     setShowImg(image);
-    addParamToURL("image", image.name);
   };
 
   return (

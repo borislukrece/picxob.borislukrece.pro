@@ -26,27 +26,6 @@ export function getRandomPrompt() {
 }
 
 /**
- * Add a parameter to the URL
- * @param name string
- * @param value string
- */
-export function addParamToURL(name: string, value: string) {
-  const url = new URL(window.location.href);
-  url.searchParams.set(name, value);
-  window.history.replaceState(null, "", url);
-}
-
-/**
- * Remove a parameter from the URL
- * @param name string
- */
-export function removeParamFromURL(name: string) {
-  const url = new URL(window.location.href);
-  url.searchParams.delete(name);
-  window.history.replaceState(null, "", url);
-}
-
-/**
  * Format a date string to a human-readable format
  * @param dateString string
  * @returns string
@@ -57,12 +36,4 @@ export function formatDate(dateString: string) {
     dateStyle: "long",
     timeStyle: "short",
   }).format(date);
-}
-
-/**
- * Check if the window width is less than or equal to 1024px
- * @returns boolean
- */
-export function isLg() {
-  return window.innerWidth >= 1024;
 }

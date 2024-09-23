@@ -11,7 +11,6 @@ import {
   useState,
 } from "react";
 import crypto from "crypto";
-import { isLg } from "@/utils/helpers";
 
 interface ValueProps {
   handleSidebar: () => void;
@@ -37,7 +36,7 @@ interface AppProps {
 export const AppContext = createContext({} as ValueProps);
 
 export const AppProvider: React.FC<AppProps> = ({ children }) => {
-  const [menuVisible, setMenuVisible] = useState(isLg());
+  const [menuVisible, setMenuVisible] = useState(false);
   const [grid, setGrid] = useState(false);
   const [messages, setMessages] = useState<Message[] | null>(null);
   const [loadingMessage, setLoadingMessage] = useState(false);
@@ -200,6 +199,11 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
     showImg,
     setShowImg,
   };
+
+  useEffect(() => {
+    const _isLg = typeof window !== "undefined" && window.innerWidth >= 1024;
+    setMenuVisible(_isLg);
+  }, []);
 
   useEffect(() => {
     if (messages) {

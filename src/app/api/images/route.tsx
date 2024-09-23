@@ -11,19 +11,17 @@ export async function GET() {
       const stats = fs.statSync(filePath);
       return {
         name: file,
-        date:
-          stats.mtime.toISOString().split("T")[0] +
-          " " +
-          stats.mtime.toISOString().split("T")[1].split(".")[0], // YYYY-MM-DD H:i:s
+        date: stats.mtime.toISOString(),
       };
     });
 
-    // eslint-disable-next-line
-    images.sort((a, b) => new Date(b.date) - new Date(a.date));
+    images.sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
 
     return Response.json({
       statusCode: 200,
-      message: "Image saved",
+      message: "Images retrieved successfully",
       data: {
         images,
       },

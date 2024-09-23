@@ -7,7 +7,9 @@ import { Message } from "@/utils/interface";
 import { useState } from "react";
 
 export default function MessageComponent({ message }: { message?: Message }) {
-  const [isBot] = useState(message?.type === "bot");
+  const [isBot] = useState(
+    message?.type === "bot" || message?.type === "__error"
+  );
 
   return message ? (
     <div
@@ -33,13 +35,9 @@ export default function MessageComponent({ message }: { message?: Message }) {
             <div className="py-2">
               {typeof message.message === "string" ? (
                 <>
-                  {isBot && message.message === "__error" ? (
+                  {isBot && message.type === "__error" ? (
                     <div className="py-1 px-4 bg-red-500 rounded-3xl">
-                      <span className="text-white">
-                        An excepted error occurred while processing the message.
-                        Please try again, if the error persists, contact our
-                        support.
-                      </span>
+                      <span className="text-white">{message.message}</span>
                     </div>
                   ) : (
                     <>
@@ -81,7 +79,7 @@ export default function MessageComponent({ message }: { message?: Message }) {
         <div className="flex-1 flex items-end">
           <div className="min-h-10 flex px-2 mx-2 rounded-r-[5rem] rounded-tl-[5rem]">
             <div className="py-2">
-              <div className="p-2 bg-[var(--foreground)] rounded-full"></div>
+              <span className="loader3"></span>
             </div>
           </div>
         </div>

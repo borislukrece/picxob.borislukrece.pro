@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 import crypto from "crypto";
+import { isLg } from "@/utils/helpers";
 
 interface ValueProps {
   handleSidebar: () => void;
@@ -21,7 +22,12 @@ interface ValueProps {
   messages: Message[] | null;
   setMessages: Dispatch<SetStateAction<Message[] | null>>;
   loadingMessage: boolean;
+  getGallery: () => Promise<void>;
   gallery: Gallery[];
+  loadingGallery: boolean;
+  setLoadingGallery: Dispatch<SetStateAction<boolean>>;
+  showImg: Gallery | null;
+  setShowImg: Dispatch<SetStateAction<Gallery | null>>;
 }
 
 interface AppProps {
@@ -31,7 +37,7 @@ interface AppProps {
 export const AppContext = createContext({} as ValueProps);
 
 export const AppProvider: React.FC<AppProps> = ({ children }) => {
-  const [menuVisible, setMenuVisible] = useState(true);
+  const [menuVisible, setMenuVisible] = useState(isLg());
   const [grid, setGrid] = useState(false);
   const [messages, setMessages] = useState<Message[] | null>(null);
   const [loadingMessage, setLoadingMessage] = useState(false);
@@ -39,15 +45,21 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
     string | null
   >(null);
   const [gallery, setGallery] = useState<Gallery[]>([]);
+  const [loadingGallery, setLoadingGallery] = useState(false);
+  const [showImg, setShowImg] = useState<Gallery | null>(null);
 
   const handleSidebar = () => {
     setMenuVisible(!menuVisible);
   };
 
-  async function getGallery() {
+  const getGallery = async () => {
+    if (loadingGallery) return;
+
     let uris: Gallery[] | null = null;
 
     try {
+      setLoadingGallery(true);
+
       uris = await new Promise(async (resolve, reject) => {
         try {
           const response = await fetch("/api/images", {
@@ -77,10 +89,10 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
     } finally {
       if (uris && typeof uris === "object") {
         setGallery(uris);
-        console.log(uris);
       }
+      setLoadingGallery(false);
     }
-  }
+  };
 
   async function query(data: { inputs: string }) {
     try {
@@ -181,7 +193,12 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
     messages,
     setMessages,
     loadingMessage,
+    getGallery,
     gallery,
+    loadingGallery,
+    setLoadingGallery,
+    showImg,
+    setShowImg,
   };
 
   useEffect(() => {
@@ -194,9 +211,6 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
         lastMessage.token !== lastProcessedMessageToken
       ) {
         setLastProcessedMessageToken(lastMessage.token);
-
-        console.log(lastMessage);
-
         (async () => {
           const msg = lastMessage.message as string;
           await sendMessage(msg)
@@ -217,11 +231,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                 });
 
                 bot.message.map((i) => {
-                  // Date format YYYY-MM-DD H:i:s
-                  const date = new Date()
-                    .toISOString()
-                    .slice(0, 19)
-                    .replace("T", "");
+                  const date = new Date().toISOString();
                   const image = {
                     name: i,
                     date: date,
@@ -237,8 +247,9 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
               } else {
                 const msg_error = {
                   token: crypto.randomBytes(16).toString("hex"),
-                  type: "bot",
-                  message: "__error",
+                  type: "__error",
+                  message:
+                    "An excepted error occurred while processing the message. Please try again, if the error persists, contact our support.",
                 };
 
                 setMessages((prevMessages) => {
@@ -274,6 +285,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
 
   useEffect(() => {
     getGallery();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

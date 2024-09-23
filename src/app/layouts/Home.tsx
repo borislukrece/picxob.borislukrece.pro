@@ -21,7 +21,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
       event.preventDefault();
     }
 
-    if (message) {
+    if (message && !loadingMessage) {
       const msg = {
         token: crypto.randomBytes(16).toString("hex"),
         type: "user",
@@ -83,8 +83,8 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
                     {!loadingMessage ? (
                       <i className="fa-solid fa-circle-arrow-up"></i>
                     ) : (
-                      <div className="my-animate-spin">
-                        <i className="fa-solid fa-circle-notch"></i>
+                      <div>
+                        <span className="loader"></span>
                       </div>
                     )}
                   </button>

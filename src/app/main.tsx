@@ -2,6 +2,7 @@
 
 import { AppContext } from "@/app/context/AppProvider";
 import MenuComponent from "@/components/MenuComponent";
+import ShowImage from "@/components/ShowImage";
 import { useContext } from "react";
 
 export default function Main({ children }: { children: React.ReactNode }) {
@@ -15,12 +16,16 @@ export default function Main({ children }: { children: React.ReactNode }) {
 
           <div
             className={`h-full ${
-              menuVisible ? "w-[calc(100vw-var(--menu-width))]" : "w-full"
+              menuVisible
+                ? "w-full lg:w-[calc(100vw-var(--menu-width))]"
+                : "w-full"
             }`}>
             {children}
           </div>
         </div>
       </main>
+
+      <ShowImage />
     </>
   );
 }

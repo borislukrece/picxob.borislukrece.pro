@@ -7,7 +7,7 @@ import Image from "next/image";
 import Gallery from "./Gallery";
 
 export default function MenuLinks() {
-  const { handleSidebar, gallery, grid, setGrid } = useContext(AppContext);
+  const { handleSidebar, grid, setGrid, gallery } = useContext(AppContext);
 
   return (
     <>
@@ -39,7 +39,7 @@ export default function MenuLinks() {
 
         <div className="flex-1 custom-scroll-bar overflow-x-hidden">
           <nav className="w-full">
-            <Gallery />
+            <Gallery gallery={gallery} />
           </nav>
         </div>
 

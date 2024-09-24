@@ -2,9 +2,9 @@
 "use client";
 
 import { useContext } from "react";
-import { CldImage } from "next-cloudinary";
 import { AppContext } from "@/app/context/AppProvider";
 import { Gallery as GalleryInterface } from "@/utils/interface";
+import ImageComponent from "./ImageComponent";
 
 export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
   const { grid, loadingGallery, setShowImg } = useContext(AppContext);
@@ -33,13 +33,15 @@ export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
                 key={index}
                 onClick={() => handleImageClick(image)}>
                 <div className="w-full h-full bg-[var(--hover)] overflow-hidden rounded-md shadow-lg shadow-black/[0.3] cursor-pointer">
-                  <CldImage
+                  <ImageComponent
+                    image={image}
                     src={image.name}
                     alt={image.name}
                     width="500"
                     height="500"
+                    quality={50}
                     crop={{
-                      type: "auto",
+                      type: "thumb",
                       source: true,
                     }}
                   />

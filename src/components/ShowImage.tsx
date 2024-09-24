@@ -2,8 +2,9 @@
 "use client";
 
 import { AppContext } from "@/app/context/AppProvider";
-import { formatDate } from "@/utils/helpers";
+import { formatDate, handleDownload } from "@/utils/helpers";
 import { useContext, useEffect, useState } from "react";
+import ImageComponent from "./ImageComponent";
 
 export default function ShowImage() {
   const { showImg, setShowImg } = useContext(AppContext);
@@ -21,23 +22,6 @@ export default function ShowImage() {
     if (isOutside) {
       close();
     }
-  };
-
-  const handleDownload = () => {
-    if (!showImg) return;
-
-    const imageUrl = showImg.name.startsWith("http")
-      ? showImg.name
-      : process.env.NEXT_PUBLIC_APP_URL + "/images/" + showImg.name;
-
-    const link = document.createElement("a");
-    link.href = imageUrl;
-    link.download = showImg.name;
-    link.target = "_blank";
-    link.style.display = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   useEffect(() => {
@@ -61,19 +45,18 @@ export default function ShowImage() {
           <div className="max-w-xl w-full h-full flex justify-center items-center image-container">
             <div className="w-full h-full relative">
               <div className="w-full h-full flex items-center justify-center">
-                <img
+                <ImageComponent
+                  image={showImg}
+                  src={showImg.name}
+                  alt={showImg.name}
                   onContextMenu={(e) => e.preventDefault()}
                   onClick={() => setDisplay(!display)}
-                  src={`${
-                    showImg.name.startsWith("http")
-                      ? showImg.name
-                      : process.env.NEXT_PUBLIC_APP_URL +
-                        "/images/" +
-                        showImg.name
-                  }`}
-                  alt={showImg.name}
-                  className="object-contain"
-                  loading="eager"
+                  width="1024"
+                  height="1024"
+                  crop={{
+                    type: "fit",
+                    source: true,
+                  }}
                 />
               </div>
               <div
@@ -82,7 +65,7 @@ export default function ShowImage() {
                 }`}>
                 <div className="w-full py-2 flex justify-between items-center">
                   <div className="px-4">
-                    <div className="text-sm bg-white/[0.2] dark:bg-black/[0.2] rounded-md px-2 py-1">
+                    <div className="text-sm text-gray-800 bg-white/[0.2] dark:bg-black/[0.2] rounded-md px-2 py-1">
                       AI-generated
                     </div>
                   </div>
@@ -106,7 +89,7 @@ export default function ShowImage() {
                   <div className="w-ful flex justify-between">
                     <div>
                       <button
-                        onClick={handleDownload}
+                        onClick={() => handleDownload(showImg)}
                         title="Download"
                         type="button"
                         className="bg-[var(--theme)] text-white px-2 py-2 shadow-md shadow-black/[0.3] backdrop-blur-sm rounded-md hover:bg-transparent hover:ring hover:ring-[var(--theme)] hover:text-[var(--theme)] transition-all duration-150 delay-75">
@@ -118,7 +101,9 @@ export default function ShowImage() {
                       <div className="text-sm text-gray-500">
                         Powered by AI on {process.env.NEXT_PUBLIC_APP_NAME}
                       </div>
-                      <div className="text-sm">{formatDate(showImg.date)}</div>
+                      <div className="text-sm text-slate-400">
+                        {formatDate(showImg.created_at)}
+                      </div>
                     </div>
                   </div>
                 </div>

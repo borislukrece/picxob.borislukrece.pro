@@ -5,6 +5,8 @@ import Image from "next/image";
 import ChatBox from "../../public/ChatXOB.png";
 import { Message } from "@/utils/interface";
 import { useState } from "react";
+import ImageComponent from "./ImageComponent";
+import { handleDownload } from "@/utils/helpers";
 
 export default function MessageComponent({ message }: { message?: Message }) {
   const [isBot] = useState(
@@ -48,12 +50,19 @@ export default function MessageComponent({ message }: { message?: Message }) {
               ) : (
                 message.message.map((value, index) => {
                   return (
-                    <div key={index} className="py-1 grid grid-cols-2">
-                      <div className="w-full h-full overflow-hidden rounded-md">
-                        <img
-                          src={`${value}`}
+                    <div className="py-1 grid grid-cols-2" key={index}>
+                      <div className="overflow-hidden rounded-md">
+                        <ImageComponent
+                          image={value}
+                          width="1024"
+                          height="1024"
                           alt="Image generated"
-                          className="w-full h-full object-cover"
+                          src={value.name}
+                          crop={{
+                            type: "auto",
+                            source: true,
+                          }}
+                          onClick={() => handleDownload(value)}
                         />
                       </div>
                     </div>

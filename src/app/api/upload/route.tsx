@@ -1,7 +1,4 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
-import path from "path";
-import crypto from "crypto";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -11,7 +8,7 @@ cloudinary.config({
 
 export async function POST(request: Request) {
   try {
-    const { image } = await request.json();
+    const { image, prompt } = await request.json();
 
     if (!image || image === undefined) {
       return Response.json(
@@ -35,25 +32,39 @@ export async function POST(request: Request) {
 
     const uri = uploadResponse.secure_url;
 
-    const token = crypto.randomBytes(16).toString("hex");
-    const imageData = { token, name: uri, date: new Date().toISOString() };
-    const dataPath = path.join(process.cwd(), "data", "images.json");
-    let data = null;
-    if (fs.existsSync(dataPath)) {
-      if (fs.readFileSync(dataPath, "utf8").length > 0) {
-        data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
-      } else {
-        data = [];
-      }
-      data.push(imageData);
-      fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
-    }
+    const data = {
+      name: uri,
+      prompt: prompt && prompt !== undefined ? prompt : null,
+    };
 
-    return Response.json({
-      statusCode: 200,
-      message: "Image saved",
-      data: { uri, image: imageData },
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_DB_ENDPOINT}/images`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + process.env.NEXT_PUBLIC_DB_ACCESS_TOKEN,
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      const { image } = await response.json();
+
+      return Response.json({
+        statusCode: 200,
+        message: "Image saved",
+        data: { uri, image },
+      });
+    } catch (error) {
+      return Response.json(
+        { message: `Failed to save uri`, error: error },
+        {
+          status: 500,
+        }
+      );
+    }
   } catch (error) {
     return Response.json(
       { message: `Failed to upload image`, error: error },

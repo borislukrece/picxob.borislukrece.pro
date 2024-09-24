@@ -1,3 +1,5 @@
+import { Gallery } from "./interface";
+
 /**
  * Random prompt for home page.
  * @returns string
@@ -37,3 +39,24 @@ export function formatDate(dateString: string) {
     timeStyle: "short",
   }).format(date);
 }
+
+/**
+ * Download generated images
+ * @param showImg Gallery
+ */
+export const handleDownload = (showImg: Gallery) => {
+  if (!showImg) return;
+
+  const imageUrl = showImg.name.startsWith("http")
+    ? showImg.name
+    : process.env.NEXT_PUBLIC_APP_URL + "/images/" + showImg.name;
+
+  const link = document.createElement("a");
+  link.href = imageUrl;
+  link.download = showImg.name;
+  link.target = "_blank";
+  link.style.display = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};

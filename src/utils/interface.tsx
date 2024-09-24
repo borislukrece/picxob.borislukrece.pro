@@ -1,11 +1,15 @@
 export interface Message {
   token: string;
   type: string;
-  message: string | string[];
+  message: string | Gallery[];
 }
 
 export interface Gallery {
-  token: string;
+  id: number;
+  user_id: number | null;
   name: string;
-  date: string;
+  prompt: null;
+  token: string;
+  created_at: string;
+  updated_at: string;
 }

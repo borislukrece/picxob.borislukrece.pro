@@ -61,16 +61,21 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
 
       uris = await new Promise(async (resolve, reject) => {
         try {
-          const response = await fetch("/api/images", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_DB_ENDPOINT}/images`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization:
+                  "Bearer " + process.env.NEXT_PUBLIC_DB_ACCESS_TOKEN,
+              },
+            }
+          );
 
           if (response.ok) {
             const data = await response.json();
-            resolve(data.data.images);
+            resolve(data.images);
           } else {
             const errorText = await response.text();
             reject(
@@ -145,7 +150,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                       headers: {
                         "Content-Type": "application/json",
                       },
-                      body: JSON.stringify({ image: base64data }),
+                      body: JSON.stringify({ image: base64data, prompt: msg }),
                     });
 
                     if (uploadResponse.ok) {
@@ -223,7 +228,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                 const bot = {
                   token: crypto.randomBytes(16).toString("hex"),
                   type: "bot",
-                  message: [res.name],
+                  message: [res],
                 };
 
                 setMessages((prevMessages) => {
@@ -235,16 +240,11 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                 });
 
                 bot.message.map((i) => {
-                  const image = {
-                    token: res.token,
-                    name: i,
-                    date: res.date,
-                  };
                   setGallery((prevGallery) => {
                     if (prevGallery) {
-                      return [image, ...prevGallery];
+                      return [i, ...prevGallery];
                     } else {
-                      return [image];
+                      return [i];
                     }
                   });
                 });

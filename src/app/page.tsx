@@ -4,56 +4,16 @@ import HomeLayout from "./layouts/Home";
 import { useEffect, useState } from "react";
 import MessageComponent from "@/components/MessageComponent";
 import Logo from "@/components/Icon/Logo";
-import { generateUUID, getRandomPrompt } from "@/utils/helpers";
+import { getRandomPrompt } from "@/utils/helpers";
 import { useMessage } from "./context/MessageContext";
-import { useGallery } from "./context/GalleryContext";
-import { useImage } from "./context/ImageContext";
 
-export default function Home(param: {
-  searchParams: {
-    image?: string;
-  };
-}) {
-  const { messages, setMessages, loadingMessage } = useMessage();
-  const { gallery } = useGallery();
-  const { setImage } = useImage();
+export default function Home() {
+  const { messages, loadingMessage } = useMessage();
 
   const [randomPhrase, setRandomPhrase] = useState("");
 
   useEffect(() => {
     setRandomPhrase(getRandomPrompt());
-  }, []);
-
-  useEffect(() => {
-    if (param && param.searchParams) {
-      const imageParam = param.searchParams.image;
-      if (imageParam && imageParam !== undefined) {
-        const decodedImageParam = decodeURIComponent(imageParam);
-        const image = gallery.find((item) => {
-          return item.name === decodedImageParam;
-        });
-        if (image && image !== undefined) {
-          setImage(image);
-        } else {
-          if (gallery && gallery.length > 0) {
-            const msg_error = {
-              token: generateUUID(),
-              type: "__error",
-              message: "Sorry, I couldn't find the image you requested.",
-            };
-
-            setMessages((prevMessages) => {
-              if (prevMessages) {
-                return [...prevMessages, msg_error];
-              } else {
-                return [msg_error];
-              }
-            });
-          }
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

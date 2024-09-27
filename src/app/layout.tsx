@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AI Image Generator",
     description: "Create unique images with our AI image generator.",
-    images: [{ url: `${process.env.NEXT_PUBLIC_APP_URL}/landscape.png` }],
+    images: [{ url: `${process.env.NEXT_PUBLIC_APP_URL}/presentation.png` }],
     url: process.env.NEXT_PUBLIC_APP_URL,
     type: "website",
   },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AI Image Generator",
     description: "Create unique images with our AI image generator.",
-    images: [`${process.env.NEXT_PUBLIC_APP_URL}/logo.png`],
+    images: [`${process.env.NEXT_PUBLIC_APP_URL}/presentation.png`],
   },
   alternates: {
     canonical: process.env.NEXT_PUBLIC_APP_URL,
@@ -70,7 +70,7 @@ export default function RootLayout({
         </ThemeProvider>
 
         <Script
-          src="https://accounts.google.com/gsi/client"
+          src="https://accounts.google.com/gsi/client?hl=en"
           strategy="beforeInteractive"
         />
       </body>

@@ -2,16 +2,17 @@
 "use client";
 
 import { formatDate, handleDownload } from "@/utils/helpers";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ImageComponent from "./ImageComponent";
 import { useImage } from "@/app/context/ImageContext";
-import { useGallery } from "@/app/context/GalleryContext";
 
 export default function ShowImage() {
   const { image, setImage } = useImage();
-  const { gallery } = useGallery();
 
   const [display, setDisplay] = useState(true);
+  const [isCopying, setIsCopying] = useState(false);
+  const [copyProgress, setCopyProgress] = useState(0);
+  const copyDuration = 2000;
 
   const close = () => {
     setImage(null);
@@ -25,19 +26,40 @@ export default function ShowImage() {
     }
   };
 
-  useEffect(() => {
-    if (image) {
-      const url = new URL(window.location.href);
-      url.searchParams.set("image", image.name);
-      window.history.replaceState(null, "", url);
-    } else if (typeof window !== "undefined") {
-      if (gallery && gallery.length > 0) {
-        const url = new URL(window.location.href);
-        url.searchParams.delete("image");
-        window.history.replaceState(null, "", url);
-      }
+  const copyLinkToClipboard = () => {
+    if (image && image.name) {
+      navigator.clipboard
+        .writeText(image.name)
+        .then(() => {
+          // alert("Image link copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy: ", err);
+        });
     }
-  }, [gallery, image]);
+  };
+
+  const handleMouseDown = () => {
+    copyLinkToClipboard();
+    setIsCopying(true);
+    setCopyProgress(0);
+    const interval = setInterval(() => {
+      setCopyProgress((prev) => {
+        if (prev < 100) return prev + 100 / (copyDuration / 100);
+        clearInterval(interval);
+        return prev;
+      });
+    }, 100);
+
+    setTimeout(() => {
+      clearInterval(interval);
+    }, copyDuration);
+  };
+
+  const handleMouseUp = () => {
+    setIsCopying(false);
+    setCopyProgress(0);
+  };
 
   return (
     image && (
@@ -90,13 +112,33 @@ export default function ShowImage() {
                 }`}>
                 <div className="bg-[var(--menu-background)] shadow-lg dark:shadow-none shadow-black/[0.150] dark:shadow-white/[0.150] rounded-lg p-2">
                   <div className="w-ful flex justify-between">
-                    <div>
+                    <div className="flex items-center flex-wrap gap-2">
                       <button
                         onClick={() => handleDownload(image)}
                         title="Download"
                         type="button"
                         className="bg-[var(--theme)] text-white px-2 py-2 shadow-md shadow-black/[0.3] backdrop-blur-sm rounded-md hover:bg-transparent hover:ring hover:ring-[var(--theme)] hover:text-[var(--theme)] transition-all duration-150 delay-75">
                         <i className="fa-solid fa-download"></i> Download
+                      </button>
+                      <button
+                        onMouseDown={handleMouseDown}
+                        onMouseUp={handleMouseUp}
+                        title="Copy link"
+                        type="button"
+                        className={`relative bg-[var(--secondary)] text-white px-2 py-2 shadow-md shadow-black/[0.3] backdrop-blur-sm rounded-md transition-all duration-150 delay-75 ${
+                          isCopying ? "ring-2 ring-transparent" : ""
+                        }`}>
+                        <i className="fa-solid fa-link"></i> Copy Link
+                        {isCopying && (
+                          <span
+                            className="absolute inset-0 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-150"
+                            style={{
+                              width: `${copyProgress}%`,
+                              transition: "width 0.1s linear",
+                              zIndex: -1,
+                            }}
+                          />
+                        )}
                       </button>
                     </div>
 

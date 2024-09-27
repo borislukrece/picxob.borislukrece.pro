@@ -1,102 +1,42 @@
 "use client";
 
-import { Message, Gallery } from "@/utils/interface";
 import {
   createContext,
-  Dispatch,
+  useContext,
+  useState,
   ReactNode,
-  SetStateAction,
   useCallback,
   useEffect,
-  useState,
+  Dispatch,
+  SetStateAction,
 } from "react";
-import crypto from "crypto";
+import { Gallery, Message } from "@/utils/interface";
+import { useUser } from "./UserContext";
+import { generateUUID } from "@/utils/helpers";
+import { useGallery } from "./GalleryContext";
 
-interface ValueProps {
-  handleSidebar: () => void;
-  menuVisible: boolean;
-  grid: boolean;
-  setGrid: Dispatch<SetStateAction<boolean>>;
-  sendMessage: (msg: string) => Promise<Gallery | null | undefined>;
+interface MessageContextProps {
   messages: Message[] | null;
   setMessages: Dispatch<SetStateAction<Message[] | null>>;
+  sendMessage: (msg: string) => Promise<Gallery | null | undefined>;
   loadingMessage: boolean;
-  getGallery: () => Promise<void>;
-  gallery: Gallery[];
-  loadingGallery: boolean;
-  setLoadingGallery: Dispatch<SetStateAction<boolean>>;
-  showImg: Gallery | null;
-  setShowImg: Dispatch<SetStateAction<Gallery | null>>;
 }
 
-interface AppProps {
-  children: ReactNode;
-}
+const MessageContext = createContext<MessageContextProps | undefined>(
+  undefined
+);
 
-export const AppContext = createContext({} as ValueProps);
-
-export const AppProvider: React.FC<AppProps> = ({ children }) => {
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [grid, setGrid] = useState(false);
+export const MessageProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [messages, setMessages] = useState<Message[] | null>(null);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [lastProcessedMessageToken, setLastProcessedMessageToken] = useState<
     string | null
   >(null);
-  const [gallery, setGallery] = useState<Gallery[]>([]);
-  const [loadingGallery, setLoadingGallery] = useState(false);
-  const [showImg, setShowImg] = useState<Gallery | null>(null);
 
-  const handleSidebar = () => {
-    setMenuVisible(!menuVisible);
-  };
-
-  const getGallery = async () => {
-    if (loadingGallery) return;
-
-    let uris: Gallery[] | null = null;
-
-    try {
-      setLoadingGallery(true);
-
-      uris = await new Promise(async (resolve, reject) => {
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_DB_ENDPOINT}/images`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization:
-                  "Bearer " + process.env.NEXT_PUBLIC_DB_ACCESS_TOKEN,
-              },
-            }
-          );
-
-          if (response.ok) {
-            const data = await response.json();
-            resolve(data.images);
-          } else {
-            const errorText = await response.text();
-            reject(
-              new Error(
-                `HTTP error! status: ${response.status}, message: ${errorText}`
-              )
-            );
-          }
-        } catch (uploadError) {
-          reject(uploadError);
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      if (uris && typeof uris === "object") {
-        setGallery(uris);
-      }
-      setLoadingGallery(false);
-    }
-  };
+  const { credentials } = useUser();
+  const { setGallery } = useGallery();
 
   async function query(data: { inputs: string }) {
     try {
@@ -128,7 +68,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
 
   const sendMessage = useCallback(
     async (msg: string) => {
-      if (!loadingMessage) {
+      if (!loadingMessage && msg) {
         let img: Gallery | null = null;
         try {
           setLoadingMessage(true);
@@ -145,25 +85,53 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                   const base64data = resReader.split(",")[1];
 
                   try {
-                    const uploadResponse = await fetch("/api/upload", {
+                    const uploadToCloudinary = await fetch("/api/upload", {
                       method: "POST",
                       headers: {
                         "Content-Type": "application/json",
                       },
-                      body: JSON.stringify({ image: base64data, prompt: msg }),
+                      body: JSON.stringify({
+                        image: base64data,
+                      }),
                     });
 
-                    if (uploadResponse.ok) {
-                      const data = await uploadResponse.json();
-                      resolve(data.data.image);
-                    } else {
-                      const errorText = await uploadResponse.text();
-                      reject(
-                        new Error(
-                          `HTTP error! status: ${uploadResponse.status}, message: ${errorText}`
-                        )
-                      );
-                    }
+                    const _res = await uploadToCloudinary.json();
+                    const uri = _res.data.uri;
+
+                    const data = {
+                      name: uri,
+                      prompt: msg,
+                    };
+
+                    const image: Gallery | null = await new Promise(
+                      async (res) => {
+                        try {
+                          const response = await fetch(
+                            `${process.env.NEXT_PUBLIC_DB_ENDPOINT}/images`,
+                            {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                                Authorization: "Bearer " + credentials,
+                              },
+                              body: JSON.stringify(data),
+                            }
+                          );
+
+                          if (response.ok) {
+                            const { image } = await response.json();
+                            res(image);
+                          } else {
+                            res(null);
+                          }
+                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        } catch (err) {
+                          res(null);
+                        }
+                      }
+                    );
+
+                    resolve(image);
                   } catch (uploadError) {
                     reject(uploadError);
                   }
@@ -185,30 +153,15 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
         }
       }
     },
-    [loadingMessage]
+    [credentials, loadingMessage]
   );
 
-  const value: ValueProps = {
-    handleSidebar,
-    menuVisible,
-    grid,
-    setGrid,
-    sendMessage,
+  const value = {
     messages,
     setMessages,
+    sendMessage,
     loadingMessage,
-    getGallery,
-    gallery,
-    loadingGallery,
-    setLoadingGallery,
-    showImg,
-    setShowImg,
   };
-
-  useEffect(() => {
-    const _isLg = typeof window !== "undefined" && window.innerWidth >= 1024;
-    setMenuVisible(_isLg);
-  }, []);
 
   useEffect(() => {
     if (messages) {
@@ -226,7 +179,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
             .then((res) => {
               if (res && res !== undefined) {
                 const bot = {
-                  token: crypto.randomBytes(16).toString("hex"),
+                  token: generateUUID(),
                   type: "bot",
                   message: [res],
                 };
@@ -250,7 +203,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
                 });
               } else {
                 const msg_error = {
-                  token: crypto.randomBytes(16).toString("hex"),
+                  token: generateUUID(),
                   type: "__error",
                   message:
                     "An excepted error occurred while processing the message. Please try again, if the error persists, contact our support.",
@@ -267,7 +220,7 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
             })
             .catch((error) => {
               const msg_error = {
-                token: crypto.randomBytes(16).toString("hex"),
+                token: generateUUID(),
                 type: "bot",
                 message: "Error sending message to bot: " + error.message,
               };
@@ -285,12 +238,17 @@ export const AppProvider: React.FC<AppProps> = ({ children }) => {
         })();
       }
     }
-  }, [lastProcessedMessageToken, messages, sendMessage]);
+  }, [lastProcessedMessageToken, messages, sendMessage, setGallery]);
 
-  useEffect(() => {
-    getGallery();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  return (
+    <MessageContext.Provider value={value}>{children}</MessageContext.Provider>
+  );
+};
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+export const useMessage = () => {
+  const context = useContext(MessageContext);
+  if (!context) {
+    throw new Error("useMessage must be used within a MessageProvider");
+  }
+  return context;
 };

@@ -1,4 +1,5 @@
 import { Gallery } from "./interface";
+import crypto from "crypto";
 
 /**
  * Random prompt for home page.
@@ -60,3 +61,11 @@ export const handleDownload = (showImg: Gallery) => {
   link.click();
   document.body.removeChild(link);
 };
+
+/**
+ * Generate UUID string
+ * @returns string
+ */
+export function generateUUID() {
+  return `${crypto.randomBytes(16).toString("hex")}`;
+}

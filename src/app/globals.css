@@ -4,7 +4,7 @@
 
 :root {
   --background: #e7e7e7;
-  --background-above: #fafafad5;
+  --background-above: #fafafabe;
   --foreground: #212121;
   --foreground-nosys: #000000;
   --menu-background: #ebebeb;
@@ -13,19 +13,18 @@
 
   --theme: #70ce6c;
   --secondary: #b851b8;
+
   --menu-width: 16rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #212121;
-    --background-above: #030303d5;
-    --foreground: #b7b7b7;
-    --foreground-nosys: #ffffff;
-    --menu-background: #171717;
-    --hover: rgba(255, 255, 255, 0.025);
-    --scrollbar-color: #323232;
-  }
+.dark {
+  --background: #212121;
+  --background-above: #030303b1;
+  --foreground: #b7b7b7;
+  --foreground-nosys: #ffffff;
+  --menu-background: #171717;
+  --hover: rgba(255, 255, 255, 0.025);
+  --scrollbar-color: #323232;
 }
 
 * {
@@ -35,9 +34,9 @@
 }
 
 body {
+  font-family: sans-serif, Arial, Helvetica;
   color: var(--foreground);
   background: var(--background);
-  font-family: sans-serif, Arial, Helvetica;
 }
 
 @layer utilities {
@@ -227,7 +226,8 @@ body {
   background: var(--theme);
   transform: rotate(0deg);
   transform-origin: 35px 145px;
-  animation: rotate 2s infinite ease-in-out;
+  -webkit-animation: rotate2 2s infinite ease-in-out;
+  animation: rotate2 2s infinite ease-in-out;
 }
 
 @keyframes slide {
@@ -244,7 +244,7 @@ body {
   }
 }
 
-@keyframes rotate {
+@keyframes rotate2 {
   0% {
     transform: rotate(-15deg)
   }

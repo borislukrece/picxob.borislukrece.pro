@@ -1,11 +1,10 @@
 "use client";
 
-import { AppContext } from "@/app/context/AppProvider";
-import { useContext } from "react";
 import MenuLinks from "./MenuLinks";
+import { useSidebar } from "@/app/context/SidebarContext";
 
 export default function MenuComponent() {
-  const { menuVisible, handleSidebar } = useContext(AppContext);
+  const { menuVisible, handleSidebar } = useSidebar();
 
   const close = () => {
     handleSidebar();
@@ -23,7 +22,7 @@ export default function MenuComponent() {
   return (
     <>
       <div
-        className={`h-full max-lg:w-full max-lg:absolute max-lg:top-0 max-lg:left-0 bg-[var(--background-above)] ${
+        className={`h-full max-lg:w-full max-lg:absolute max-lg:top-0 max-lg:left-0 z-[45] bg-[var(--background-above)] ${
           !menuVisible && "hidden"
         }`}
         onClick={handleClickOutside}>

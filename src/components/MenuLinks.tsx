@@ -1,13 +1,43 @@
 "use client";
 
-import { useContext } from "react";
-import { AppContext } from "@/app/context/AppProvider";
+import { useEffect, useRef } from "react";
 import ChatBOX from "../../public/ChatXOB.png";
 import Image from "next/image";
 import Gallery from "./Gallery";
+import Sidebar from "./Icon/Sidebar";
+import { useSidebar } from "@/app/context/SidebarContext";
+import { useGrid } from "@/app/context/GridContext";
+import { useGallery } from "@/app/context/GalleryContext";
+import { useUser } from "@/app/context/UserContext";
 
 export default function MenuLinks() {
-  const { handleSidebar, grid, setGrid, gallery } = useContext(AppContext);
+  const { handleSidebar } = useSidebar();
+  const { grid, setGrid } = useGrid();
+  const { gallery, loadingGallery, getGallery } = useGallery();
+  const { isUserLoggedIn } = useUser();
+  const { handleDisplayImages, displayImage } = useGallery();
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+
+      if (scrollTop + clientHeight >= scrollHeight - 10 && !loadingGallery) {
+        getGallery();
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [getGallery, loadingGallery]);
 
   return (
     <>
@@ -19,25 +49,55 @@ export default function MenuLinks() {
               type="button"
               title="Sidebar"
               className="text-xl p-2 aspect-square hover:bg-[var(--hover)] rounded-md">
-              <i className="fa-solid fa-window-restore"></i>
+              <Sidebar className="w-7 h-7" />
             </button>
             <button
               onClick={() => setGrid(!grid)}
               type="button"
               title="Display"
-              className={`text-xl p-2 aspect-square hover:bg-[var(--hover)] rounded-md ${
+              className={`text-xl p-2 px-3 aspect-square hover:bg-[var(--hover)] rounded-md ${
                 !gallery && "hidden"
               }`}>
               {grid ? (
                 <i className="fa-solid fa-grip"></i>
               ) : (
-                <i className="fa-solid fa-list"></i>
+                <i className="fa-solid fa-table-list"></i>
               )}
             </button>
           </div>
         </div>
+        {isUserLoggedIn() && (
+          <div className="w-full grid grid-cols-2 gap-2 py-2">
+            <button
+              onClick={() => {
+                handleDisplayImages("public");
+              }}
+              type="button"
+              className={`text-sm px-2 py-2 rounded-md truncate ${
+                displayImage !== "public"
+                  ? "bg-[var(--background)]"
+                  : "bg-[var(--theme)] text-black"
+              }`}>
+              <i className="fas fa-images"></i> All images
+            </button>
+            <button
+              onClick={() => {
+                handleDisplayImages("private");
+              }}
+              type="button"
+              className={`text-sm px-2 py-2 rounded-md truncate ${
+                displayImage !== "private"
+                  ? "bg-[var(--background)]"
+                  : "bg-[var(--theme)] text-black"
+              }`}>
+              <i className="fas fa-user"></i> My images
+            </button>
+          </div>
+        )}
 
-        <div className="flex-1 custom-scroll-bar overflow-x-hidden">
+        <div
+          ref={containerRef}
+          className="flex-1 custom-scroll-bar overflow-x-hidden">
           <nav className="w-full">
             <Gallery gallery={gallery} />
           </nav>

@@ -1,14 +1,14 @@
 "use client";
 
-import { FormEvent, useContext, useRef, useState } from "react";
-import crypto from "crypto";
-import { AppContext } from "../context/AppProvider";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Main from "../main";
 import HeaderComponent from "@/components/HeaderComponent";
 import ResizableTextArea from "@/components/ResizableTextArea";
+import { generateUUID } from "@/utils/helpers";
+import { useMessage } from "../context/MessageContext";
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
-  const { setMessages, loadingMessage } = useContext(AppContext);
+  const { setMessages, loadingMessage, messages } = useMessage();
 
   const [message, setMessage] = useState("");
 
@@ -23,7 +23,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
 
     if (message && !loadingMessage) {
       const msg = {
-        token: crypto.randomBytes(16).toString("hex"),
+        token: generateUUID(),
         type: "user",
         message: message,
       };
@@ -41,6 +41,15 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   const conversationRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (conversationRef.current) {
+      conversationRef.current.scrollTo({
+        top: conversationRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
 
   return (
     <Main>
@@ -70,6 +79,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
                     onInput={handleInput}
                     onSubmit={() => handleSubmit()}
                     value={message}
+                    maxLength={880}
                     placeholder={`Image ${process.env.NEXT_PUBLIC_APP_NAME}`}
                   />
                 </div>

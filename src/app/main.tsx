@@ -1,12 +1,11 @@
 "use client";
 
-import { AppContext } from "@/app/context/AppProvider";
 import MenuComponent from "@/components/MenuComponent";
 import ShowImage from "@/components/ShowImage";
-import { useContext } from "react";
+import { useSidebar } from "./context/SidebarContext";
 
 export default function Main({ children }: { children: React.ReactNode }) {
-  const { menuVisible } = useContext(AppContext);
+  const { menuVisible } = useSidebar();
 
   return (
     <>

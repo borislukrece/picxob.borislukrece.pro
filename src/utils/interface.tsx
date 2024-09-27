@@ -5,11 +5,28 @@ export interface Message {
 }
 
 export interface Gallery {
-  id: number;
-  user_id: number | null;
+  id: number | null;
+  sub: number | null;
   name: string;
-  prompt: null;
+  prompt: string | null;
   token: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface User {
+  iss: string;
+  azp: string;
+  aud: string;
+  sub: string;
+  email: string;
+  email_verified: boolean;
+  nbf: number;
+  name: string;
+  picture: string;
+  given_name: string;
+  family_name: string;
+  iat: number;
+  exp: number;
+  jti: string;
 }

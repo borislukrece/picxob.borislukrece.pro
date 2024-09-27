@@ -1,20 +1,22 @@
 "use client";
 
 import HomeLayout from "./layouts/Home";
-import { useContext, useEffect, useState } from "react";
-import { AppContext } from "./context/AppProvider";
+import { useEffect, useState } from "react";
 import MessageComponent from "@/components/MessageComponent";
 import Logo from "@/components/Icon/Logo";
-import { getRandomPrompt } from "@/utils/helpers";
-import crypto from "crypto";
+import { generateUUID, getRandomPrompt } from "@/utils/helpers";
+import { useMessage } from "./context/MessageContext";
+import { useGallery } from "./context/GalleryContext";
+import { useImage } from "./context/ImageContext";
 
 export default function Home(param: {
   searchParams: {
     image?: string;
   };
 }) {
-  const { messages, setMessages, loadingMessage, gallery, setShowImg } =
-    useContext(AppContext);
+  const { messages, setMessages, loadingMessage } = useMessage();
+  const { gallery } = useGallery();
+  const { setImage } = useImage();
 
   const [randomPhrase, setRandomPhrase] = useState("");
 
@@ -26,29 +28,33 @@ export default function Home(param: {
     if (param && param.searchParams) {
       const imageParam = param.searchParams.image;
       if (imageParam && imageParam !== undefined) {
+        const decodedImageParam = decodeURIComponent(imageParam);
         const image = gallery.find((item) => {
-          return item.name === imageParam;
+          return item.name === decodedImageParam;
         });
         if (image && image !== undefined) {
-          setShowImg(image);
+          setImage(image);
         } else {
-          const msg_error = {
-            token: crypto.randomBytes(16).toString("hex"),
-            type: "__error",
-            message: "Sorry, I couldn't find the image you requested.",
-          };
+          if (gallery && gallery.length > 0) {
+            const msg_error = {
+              token: generateUUID(),
+              type: "__error",
+              message: "Sorry, I couldn't find the image you requested.",
+            };
 
-          setMessages((prevMessages) => {
-            if (prevMessages) {
-              return [...prevMessages, msg_error];
-            } else {
-              return [msg_error];
-            }
-          });
+            setMessages((prevMessages) => {
+              if (prevMessages) {
+                return [...prevMessages, msg_error];
+              } else {
+                return [msg_error];
+              }
+            });
+          }
         }
       }
     }
-  }, [gallery, param, setMessages, setShowImg]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

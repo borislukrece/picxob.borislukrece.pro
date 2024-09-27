@@ -43,7 +43,7 @@ export default function MessageComponent({ message }: { message?: Message }) {
                     </div>
                   ) : (
                     <>
-                      <span className="py-1">{message.message}</span>
+                      <p className="py-1 break-all">{message.message}</p>
                     </>
                   )}
                 </>

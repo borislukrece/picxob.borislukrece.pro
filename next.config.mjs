@@ -3,10 +3,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: "localhost",
+        hostname: "*",
       },
     ],
   },
+  reactStrictMode: false,
 };
 
 export default nextConfig;

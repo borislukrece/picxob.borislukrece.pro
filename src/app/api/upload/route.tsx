@@ -8,7 +8,7 @@ cloudinary.config({
 
 export async function POST(request: Request) {
   try {
-    const { image, prompt } = await request.json();
+    const { image } = await request.json();
 
     if (!image || image === undefined) {
       return Response.json(
@@ -32,39 +32,11 @@ export async function POST(request: Request) {
 
     const uri = uploadResponse.secure_url;
 
-    const data = {
-      name: uri,
-      prompt: prompt && prompt !== undefined ? prompt : null,
-    };
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_DB_ENDPOINT}/images`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + process.env.NEXT_PUBLIC_DB_ACCESS_TOKEN,
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      const { image } = await response.json();
-
-      return Response.json({
-        statusCode: 200,
-        message: "Image saved",
-        data: { uri, image },
-      });
-    } catch (error) {
-      return Response.json(
-        { message: `Failed to save uri`, error: error },
-        {
-          status: 500,
-        }
-      );
-    }
+    return Response.json({
+      statusCode: 200,
+      message: "Image saved",
+      data: { uri },
+    });
   } catch (error) {
     return Response.json(
       { message: `Failed to upload image`, error: error },

@@ -1,17 +1,46 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useContext } from "react";
-import { AppContext } from "@/app/context/AppProvider";
 import { Gallery as GalleryInterface } from "@/utils/interface";
 import ImageComponent from "./ImageComponent";
+import { useGallery } from "@/app/context/GalleryContext";
+import { useGrid } from "@/app/context/GridContext";
+import { useImage } from "@/app/context/ImageContext";
+import { useEffect, useState } from "react";
 
 export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
-  const { grid, loadingGallery, setShowImg } = useContext(AppContext);
+  const { loadingGallery } = useGallery();
+  const { grid } = useGrid();
+  const { setImage } = useImage();
+
+  const [groupedImages, setGroupedImages] = useState<
+    Record<string, GalleryInterface[]>
+  >({});
 
   const handleImageClick = (image: GalleryInterface) => {
-    setShowImg(image);
+    setImage(image);
   };
+
+  useEffect(() => {
+    if (gallery) {
+      const _groupImagesByDate = (images: GalleryInterface[]) => {
+        const groupedImages: Record<string, GalleryInterface[]> = {};
+
+        images.forEach((image) => {
+          const date = new Date(image.created_at).toLocaleDateString();
+          if (!groupedImages[date]) {
+            groupedImages[date] = [];
+          }
+          groupedImages[date].push(image);
+        });
+
+        return groupedImages;
+      };
+
+      const _groupedImages = _groupImagesByDate(gallery);
+      setGroupedImages(_groupedImages);
+    }
+  }, [gallery]);
 
   return (
     <div>
@@ -23,33 +52,52 @@ export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
           <span className="loader2"></span>
         </div>
       ) : (
-        <div
-          className={`grid ${grid ? "grid-cols-1" : "grid-cols-3"} gap-4 px-2`}>
-          {gallery.map((image, index) => {
-            return (
-              <button
-                title="Thumbail"
-                type="button"
-                key={index}
-                onClick={() => handleImageClick(image)}>
-                <div className="w-full h-full bg-[var(--hover)] overflow-hidden rounded-md shadow-lg shadow-black/[0.3] cursor-pointer">
-                  <ImageComponent
-                    image={image}
-                    src={image.name}
-                    alt={image.name}
-                    width="500"
-                    height="500"
-                    quality={50}
-                    crop={{
-                      type: "thumb",
-                      source: true,
-                    }}
-                  />
+        <>
+          {Object.keys(groupedImages).length > 0 ? (
+            Object.keys(groupedImages).map((date, index) => (
+              <div key={index} className="pb-2">
+                <div className="font-semibold text-xs text-center mb-2 px-2 text-slate-500 sticky top-0 z-10">
+                  <h2 className="bg-[var(--background)] py-2 rounded-b-md shadow-md shadow-black/[0.5] dark:shadow-black/[0.4]">
+                    {date}
+                  </h2>
                 </div>
-              </button>
-            );
-          })}
-        </div>
+                <div
+                  className={`grid ${
+                    grid ? "grid-cols-1" : "grid-cols-3"
+                  } gap-4 px-2`}>
+                  {groupedImages[date].map((image, imgIndex) => (
+                    <button
+                      title="Thumbnail"
+                      type="button"
+                      key={imgIndex}
+                      onClick={() => handleImageClick(image)}>
+                      <div className="w-full h-full bg-[var(--hover)] overflow-hidden rounded-md shadow-lg shadow-black/[0.3] cursor-pointer">
+                        <div className="w-full h-full hover:scale-110 transition-all duration-150">
+                          <ImageComponent
+                            image={image}
+                            src={image.name}
+                            alt={image.name}
+                            width="500"
+                            height="500"
+                            quality={50}
+                            crop={{
+                              type: "thumb",
+                              source: true,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="w-full text-sm text-gray-500 text-center py-2">
+              No images found
+            </div>
+          )}
+        </>
       )}
     </div>
   );

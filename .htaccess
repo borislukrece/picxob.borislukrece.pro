@@ -1,0 +1,14 @@
+# Enable rewrite module
+RewriteEngine On
+
+# Redirect requests to the frontend
+RewriteCond %{HTTPS} on
+RewriteRule ^(.*)$ http://localhost:3000/$1 [P,L]
+
+# Redirect requests to the backend
+RewriteCond %{HTTPS} on
+RewriteRule ^backend/(.*)$ http://localhost:4000/$1 [P,L]
+
+# Optional: If you want to force HTTP requests to HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]

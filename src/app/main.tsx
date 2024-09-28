@@ -9,7 +9,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <main className="w-full min-h-screen">
+      <main className="w-full full-height overflow-hidden">
         <div className="w-full h-full flex">
           <MenuComponent />
 

@@ -27,7 +27,8 @@ const ResizableTextArea = ({
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter") {
+    if (event.shiftKey && event.key === "Enter") {
+    } else if (event.key === "Enter") {
       event.preventDefault();
       onSubmit();
     }

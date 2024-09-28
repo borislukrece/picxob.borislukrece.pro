@@ -9,6 +9,7 @@ import {
 } from "react";
 import { Gallery } from "@/utils/interface";
 import { useUser } from "./UserContext";
+import { APP_ENDPOINT } from "@/utils/helpers";
 
 interface GalleryContextProps {
   gallery: Gallery[];
@@ -50,8 +51,12 @@ export const GalleryProvider: React.FC<{ children: ReactNode }> = ({
 
       const endpoint =
         displayImage === "private"
-          ? `${process.env.NEXT_PUBLIC_DB_ENDPOINT}/users/images?page=${pageGallery}&entries=${entries}`
-          : `${process.env.NEXT_PUBLIC_DB_ENDPOINT}/images?page=${pageGallery}&entries=${entries}`;
+          ? `${
+              APP_ENDPOINT() ?? ""
+            }/users/images?page=${pageGallery}&entries=${entries}`
+          : `${
+              APP_ENDPOINT() ?? ""
+            }/images?page=${pageGallery}&entries=${entries}`;
 
       uris = await new Promise(async (resolve, reject) => {
         try {
@@ -103,6 +108,7 @@ export const GalleryProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const handleDisplayImages = (display: "public" | "private") => {
+    if (display === displayImage) return;
     setGallery([]);
     setPageGallery(1);
     setTotalPageGallery(null);

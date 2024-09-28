@@ -20,7 +20,7 @@ export default function MessageComponent({ message }: { message?: Message }) {
       }`}
       id={`${message.token}`}>
       <div
-        className={`flex px-2 py-1 ${
+        className={`flex px-2 ${
           isBot ? "items-start" : "bg-[var(--hover)] rounded-3xl"
         }`}>
         {isBot && (
@@ -33,17 +33,25 @@ export default function MessageComponent({ message }: { message?: Message }) {
           </div>
         )}
         <div className="flex-1 flex items-end">
-          <div className="min-h-10 flex px-2 mx-2 rounded-r-[5rem] rounded-tl-[5rem]">
-            <div className="py-2">
+          <div className="min-h-10 flex items-center px-2 mx-2 rounded-r-[5rem] rounded-tl-[5rem]">
+            <div className="py-2 sm:py-1">
               {typeof message.message === "string" ? (
                 <>
                   {isBot && message.type === "__error" ? (
-                    <div className="py-1 px-4 bg-red-500 rounded-3xl">
-                      <span className="text-white">{message.message}</span>
-                    </div>
+                    <>
+                      <p className="px-4 py-2 bg-red-500 rounded-3xl text-white">
+                        <span className="whitespace-pre-line">
+                          {message.message}
+                        </span>
+                      </p>
+                    </>
                   ) : (
                     <>
-                      <p className="py-1 break-all">{message.message}</p>
+                      <p className="py-2 break-all">
+                        <span className="whitespace-pre-line">
+                          {message.message}
+                        </span>
+                      </p>
                     </>
                   )}
                 </>
@@ -86,10 +94,8 @@ export default function MessageComponent({ message }: { message?: Message }) {
           />
         </div>
         <div className="flex-1 flex items-end">
-          <div className="min-h-10 flex px-2 mx-2 rounded-r-[5rem] rounded-tl-[5rem]">
-            <div className="py-2">
-              <span className="loader3"></span>
-            </div>
+          <div className="min-h-10 flex items-center px-2 mx-2 rounded-r-[5rem] rounded-tl-[5rem]">
+            <div className="bg-white w-4 h-4 rounded-full"></div>
           </div>
         </div>
       </div>

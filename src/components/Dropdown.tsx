@@ -32,7 +32,7 @@ export default function Dropdown({
   }, [dropdownRef]);
 
   return (
-    <div className="px-4 relative" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       <div
         onClick={toggleDropdown}
         className={`flex items-center justify-center hover:bg-[var(--hover)] ${

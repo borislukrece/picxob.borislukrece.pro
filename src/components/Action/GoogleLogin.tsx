@@ -2,22 +2,39 @@
 
 import Dropdown from "../Dropdown";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import { useUser } from "@/app/context/UserContext";
 
 const GoogleLogin = React.memo(function GoogleLogin() {
-  const { isUserLoggedIn, logout, user, loadingLogin } = useUser();
+  const { isUserLoggedIn, login, logout, initGoogle, user, loadingLogin } =
+    useUser();
 
   const handleLogout = () => {
     logout();
   };
 
+  useEffect(() => {
+    const initGoogleAuth = () => {
+      if (typeof window !== "undefined") {
+        const savedToken = localStorage.getItem("userToken");
+        (async () => {
+          if (savedToken) {
+            await login(savedToken);
+          } else {
+            await initGoogle();
+          }
+        })();
+      }
+    };
+
+    initGoogleAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return !loadingLogin ? (
     <>
       <div className="flex items-center gap-2">
-        <div
-          id="googleSignInButton"
-          className={`${isUserLoggedIn() ? "hidden" : ""}`}></div>
+        <div id="googleSignInButton"></div>
 
         {isUserLoggedIn() && user && (
           <>
@@ -41,7 +58,11 @@ const GoogleLogin = React.memo(function GoogleLogin() {
                   </>
                 );
               }}>
-              <div className="p-2 grid gap-1">
+              <div className="w-full p-2 grid gap-1">
+                <div className="w-full truncate px-4 cursor-default">
+                  {user.email}
+                </div>
+                <div className="w-full h-[1px] bg-gray-500/10">&nbsp;</div>
                 <button
                   type="button"
                   onClick={handleLogout}

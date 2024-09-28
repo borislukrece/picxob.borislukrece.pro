@@ -10,6 +10,7 @@ import { MessageProvider } from "./context/MessageContext";
 import { GalleryProvider } from "./context/GalleryContext";
 import { GridProvider } from "./context/GridContext";
 import { ImageProvider } from "./context/ImageContext";
+import { APP_URL } from "@/utils/helpers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,19 +32,20 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AI Image Generator",
     description: "Create unique images with our AI image generator.",
-    images: [{ url: `${process.env.NEXT_PUBLIC_APP_URL}/presentation.png` }],
-    url: process.env.NEXT_PUBLIC_APP_URL,
+    images: [{ url: `${APP_URL() ?? ""}/presentation.png` }],
+    url: APP_URL() ?? "",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "AI Image Generator",
     description: "Create unique images with our AI image generator.",
-    images: [`${process.env.NEXT_PUBLIC_APP_URL}/presentation.png`],
+    images: [`${APP_URL()}/presentation.png`],
   },
   alternates: {
-    canonical: process.env.NEXT_PUBLIC_APP_URL,
+    canonical: APP_URL() ?? "",
   },
+  manifest: `${APP_URL() ?? ""}/site.webmanifest`,
 };
 
 export default function RootLayout({

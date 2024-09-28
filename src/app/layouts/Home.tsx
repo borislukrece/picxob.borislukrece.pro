@@ -53,7 +53,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Main>
-      <div className="w-full h-screen flex flex-col">
+      <div className="w-full full-height flex flex-col">
         <div className="w-full min-h-[4.5rem]">
           <HeaderComponent />
         </div>

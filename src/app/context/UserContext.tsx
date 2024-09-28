@@ -1,19 +1,15 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useRef,
-  useEffect,
-} from "react";
+import { createContext, useContext, useState, ReactNode, useRef } from "react";
 import { User as UserInterface } from "@/utils/interface";
+import { useTheme } from "./ThemeContext";
+import { APP_ENDPOINT } from "@/utils/helpers";
 
 interface UserContextProps {
   credentials: string | null;
   user: UserInterface | null;
   loadingLogin: boolean;
+  initGoogle: () => Promise<void>;
   login: (token: string) => Promise<void>;
   logout: () => void;
   isUserLoggedIn: () => boolean;
@@ -27,13 +23,15 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const [credentials, setCredentials] = useState<string | null>(null);
   const [user, setUser] = useState<UserInterface | null>(null);
   const [loadingLogin, setLoadingLogin] = useState(false);
+  const GoogleInitialized = useRef(false);
+
+  const { theme } = useTheme();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleCredentialResponse = (response: { credential: string }) => {
     login(response.credential);
   };
 
-  const GoogleInitialized = useRef(false);
   const initGoogle = async () => {
     if (typeof window !== "undefined" && window.google) {
       if (!isUserLoggedIn()) {
@@ -51,15 +49,26 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           });
           GoogleInitialized.current = true;
         }
-        window.google.accounts.id.renderButton(
-          document.getElementById("googleSignInButton"),
-          {
-            theme: "filled_blue",
-            size: "large",
-            text: "signin_with",
-            type: "standard",
-          }
-        );
+        if (document.getElementById("googleSignInButton")) {
+          window.google.accounts.id.renderButton(
+            document.getElementById("googleSignInButton"),
+            {
+              theme:
+                theme === "system"
+                  ? window.matchMedia("(prefers-color-scheme: dark)").matches
+                    ? "filled_black"
+                    : "filled_black"
+                  : theme,
+              size: "large",
+              text: "signin_with",
+              type: window.matchMedia("(max-width: 640px)").matches
+                ? "icon"
+                : "standard",
+            }
+          );
+        } else {
+          console.warn("googleSignInButton element doesn't exist.");
+        }
         window.google.accounts.id.prompt();
       }
     }
@@ -67,22 +76,18 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
   const login = async (token: string) => {
     setLoadingLogin(true);
-    setLoadingLogin(true);
     let auth: UserInterface | null = null;
     try {
-      auth = await new Promise(async (resolve, reject) => {
+      auth = await new Promise(async (resolve) => {
         try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_DB_ENDPOINT}/users`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              cache: "no-store",
-            }
-          );
+          const response = await fetch(`${APP_ENDPOINT()}/users`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+          });
 
           if (response.ok) {
             const _user: UserInterface = await response.json();
@@ -90,17 +95,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           } else {
             const errorText = await response.text();
             if (response.status === 401) {
-              setCredentials(null);
-              setUser(null);
+              logout();
             }
-            reject(
-              new Error(
-                `HTTP error! status: ${response.status}, message: ${errorText}`
-              )
+            console.log(
+              `HTTP error! status: ${response.status}, message: ${errorText}`
             );
+            resolve(null);
           }
         } catch (error) {
-          reject(error);
+          console.log("Login process failed:", error);
+          resolve(null);
         }
       });
     } catch (error) {
@@ -115,6 +119,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     } else {
       await initGoogle();
     }
+
     setLoadingLogin(false);
   };
 
@@ -140,24 +145,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     credentials,
     user,
     loadingLogin,
+    initGoogle,
     login,
     logout,
     isUserLoggedIn,
   };
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedToken = localStorage.getItem("userToken");
-      (async () => {
-        if (savedToken) {
-          await login(savedToken);
-        } else {
-          await initGoogle();
-        }
-      })();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

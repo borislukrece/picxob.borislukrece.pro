@@ -51,7 +51,7 @@ const HeaderComponent = React.memo(function HeaderComponent() {
           </Link>
         </div>
         <div className="px-4 flex items-center">
-          <div>
+          <div className="px-4">
             <Dropdown
               Button={() => {
                 return (

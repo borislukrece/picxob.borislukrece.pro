@@ -22,13 +22,13 @@ export default function MenuComponent() {
   return (
     <>
       <div
-        className={`h-full max-lg:w-full max-lg:absolute max-lg:top-0 max-lg:left-0 z-[45] bg-[var(--background-above)] ${
+        className={`full-height h-full max-lg:w-full max-lg:absolute max-lg:top-0 max-lg:left-0 z-[45] bg-[var(--background-above)] ${
           !menuVisible && "hidden"
         }`}
         onClick={handleClickOutside}>
         <div
           className={`menu-container max-w-[var(--menu-width)] w-full h-full`}>
-          <div className="flex flex-col w-full bg-[var(--menu-background)] h-screen shadow-md shadow-black/[0.5] px-2">
+          <div className="flex flex-col w-full bg-[var(--menu-background)] h-full shadow-md shadow-black/[0.5] px-2">
             <MenuLinks />
           </div>
         </div>

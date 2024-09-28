@@ -12,7 +12,7 @@ import {
 } from "react";
 import { Gallery, Message } from "@/utils/interface";
 import { useUser } from "./UserContext";
-import { generateUUID } from "@/utils/helpers";
+import { generateUUID, APP_ENDPOINT } from "@/utils/helpers";
 import { useGallery } from "./GalleryContext";
 
 interface MessageContextProps {
@@ -107,7 +107,7 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({
                       async (res) => {
                         try {
                           const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_DB_ENDPOINT}/images`,
+                            `${APP_ENDPOINT()}/images`,
                             {
                               method: "POST",
                               headers: {

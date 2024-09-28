@@ -69,3 +69,19 @@ export const handleDownload = (showImg: Gallery) => {
 export function generateUUID() {
   return `${crypto.randomBytes(16).toString("hex")}`;
 }
+
+export function APP_URL() {
+  if (process.env.NEXT_PUBLIC_APP_ENV === "local") {
+    return process.env.NEXT_PUBLIC_APP_URL_LOCAL;
+  } else {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+}
+
+export function APP_ENDPOINT() {
+  if (process.env.NEXT_PUBLIC_APP_ENV === "local") {
+    return process.env.NEXT_PUBLIC_DB_ENDPOINT_LOCAL;
+  } else {
+    return process.env.NEXT_PUBLIC_DB_ENDPOINT;
+  }
+}

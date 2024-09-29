@@ -23,7 +23,7 @@ export interface FetcherConfig extends RequestInit {
   
       if (!response.ok) {
         const errorDetails = await response.json();
-        if(errorDetails.status === 401){
+        if(response.status === 401){
             localStorage.removeItem("userToken");
             localStorage.removeItem("user");
             if (typeof window !== "undefined" && window.google) {
@@ -31,8 +31,9 @@ export interface FetcherConfig extends RequestInit {
                 console.log("User disconnected.");
               });
               window.google.accounts.id.disableAutoSelect();
-              window.location.reload();
             }
+            window.location.reload();
+            console.log('logout');
         }
         throw new Error(errorDetails.message || "An error occurred");
       }

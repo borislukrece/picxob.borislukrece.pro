@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import ChatBOX from "../../public/ChatXOB.png";
+import ChatBOX from "../../public/picxob.png";
 import Image from "next/image";
 import Gallery from "./Gallery";
 import Sidebar from "./Icon/Sidebar";

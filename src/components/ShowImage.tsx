@@ -153,7 +153,7 @@ export default function ShowImage() {
                   </div>
                   {image.prompt && (
                     <div
-                      className="w-full my-2 line-clamp-2"
+                      className="w-full bg-[var(--background-above)] px-2 py-2 rounded-md shadow my-2 line-clamp-2"
                       title={`${image.prompt}`}>
                       {image.prompt}
                     </div>

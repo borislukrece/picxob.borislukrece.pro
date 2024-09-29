@@ -65,11 +65,11 @@ export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
                   className={`grid ${
                     grid ? "grid-cols-1" : "grid-cols-3"
                   } gap-4 px-2`}>
-                  {groupedImages[date].map((image, imgIndex) => (
+                  {groupedImages[date].map((image) => (
                     <button
                       title="Thumbnail"
                       type="button"
-                      key={imgIndex}
+                      key={image.token}
                       onClick={() => handleImageClick(image)}>
                       <div className="w-full h-full bg-[var(--hover)] overflow-hidden rounded-md shadow-lg shadow-black/[0.3] cursor-pointer">
                         <div className="w-full h-full hover:scale-110 transition-all duration-150">

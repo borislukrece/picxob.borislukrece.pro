@@ -45,7 +45,6 @@ export const metadata: Metadata = {
   alternates: {
     canonical: APP_URL() ?? "",
   },
-  manifest: `${APP_URL() ?? ""}/site.webmanifest`,
 };
 
 export default function RootLayout({
@@ -55,6 +54,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="any" />
+        <link rel="manifest" href="/site.webmanifest" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased transition-colors duration-150`}>
         <ThemeProvider>

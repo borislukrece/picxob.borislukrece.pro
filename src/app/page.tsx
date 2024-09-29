@@ -22,8 +22,8 @@ export default function Home() {
         <div className="w-full flex flex-col">
           {messages && messages.length > 0 ? (
             <>
-              {messages.map((item, index) => {
-                return <MessageComponent message={item} key={index} />;
+              {messages.map((item) => {
+                return <MessageComponent message={item} key={item.token} />;
               })}
               {loadingMessage && <MessageComponent />}
             </>

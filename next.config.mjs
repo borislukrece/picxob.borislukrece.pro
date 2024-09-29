@@ -7,7 +7,7 @@ const nextConfig = {
       },
     ],
   },
-  reactStrictMode: false,
+  // reactStrictMode: false,
   webpack: (config, {}) => {
     config.experiments = {
       ...config.experiments,

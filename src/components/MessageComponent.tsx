@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import ChatBox from "../../public/ChatXOB.png";
+import ChatBox from "../../public/picxob.png";
 import { Message } from "@/utils/interface";
 import { useState } from "react";
 import ImageComponent from "./ImageComponent";
@@ -56,9 +56,9 @@ export default function MessageComponent({ message }: { message?: Message }) {
                   )}
                 </>
               ) : (
-                message.message.map((value, index) => {
+                message.message.map((value) => {
                   return (
-                    <div className="py-1 grid grid-cols-2" key={index}>
+                    <div className="py-1 grid grid-cols-2" key={value.token}>
                       <div className="overflow-hidden rounded-md">
                         <ImageComponent
                           image={value}

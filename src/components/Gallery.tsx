@@ -75,8 +75,8 @@ export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
                         <div className="w-full h-full hover:scale-110 transition-all duration-150">
                           <ImageComponent
                             image={image}
-                            src={image.name}
-                            alt={image.name}
+                            src={image.uri}
+                            alt={image.uri}
                             width="500"
                             height="500"
                             quality={50}

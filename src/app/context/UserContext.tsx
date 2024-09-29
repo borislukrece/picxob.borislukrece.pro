@@ -4,6 +4,7 @@ import { createContext, useContext, useState, ReactNode, useRef } from "react";
 import { User as UserInterface } from "@/utils/interface";
 import { useTheme } from "./ThemeContext";
 import { APP_ENDPOINT } from "@/utils/helpers";
+import { fetcher } from "@/utils/fetcher";
 
 interface UserContextProps {
   credentials: string | null;
@@ -80,26 +81,22 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     try {
       auth = await new Promise(async (resolve) => {
         try {
-          const response = await fetch(`${APP_ENDPOINT()}/users`, {
+          const response = await fetcher(`${APP_ENDPOINT()}/users`, {
             method: "GET",
+            cache: "no-store",
             headers: {
-              "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            cache: "no-store",
           });
 
-          if (response.ok) {
-            const _user: UserInterface = await response.json();
+          if (
+            response &&
+            typeof response === "object" &&
+            Object.keys(response).length > 0
+          ) {
+            const _user: UserInterface = response;
             resolve(_user);
           } else {
-            const errorText = await response.text();
-            if (response.status === 401) {
-              logout();
-            }
-            console.log(
-              `HTTP error! status: ${response.status}, message: ${errorText}`
-            );
             resolve(null);
           }
         } catch (error) {

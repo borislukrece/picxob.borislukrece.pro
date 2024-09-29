@@ -13,17 +13,21 @@
     "cloudinary": "^2.5.0",
     "cloudinary-core": "^2.13.1",
     "fs": "^0.0.1-security",
+    "google-auth-library": "^9.14.1",
+    "mysql2": "^3.11.3",
     "next": "^14.2.13",
     "next-cloudinary": "^6.13.0",
     "rate-limiter-flexible": "^5.0.3",
     "react": "^18",
     "react-dom": "^18",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
     "postcss": "^8",

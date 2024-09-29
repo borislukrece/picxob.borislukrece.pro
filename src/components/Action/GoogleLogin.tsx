@@ -36,7 +36,7 @@ const GoogleLogin = React.memo(function GoogleLogin() {
       <div className="flex items-center gap-2">
         <div id="googleSignInButton"></div>
 
-        {isUserLoggedIn() && user && (
+        {isUserLoggedIn() && user ? (
           <>
             <Dropdown
               Button={() => {
@@ -71,6 +71,18 @@ const GoogleLogin = React.memo(function GoogleLogin() {
                 </button>
               </div>
             </Dropdown>
+          </>
+        ) : (
+          <>
+            {loadingLogin && (
+              <>
+                <div className="w-[65px] flex items-center">
+                  <button title="Loading" type="button">
+                    <div className="loader6"></div>
+                  </button>
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

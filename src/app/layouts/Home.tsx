@@ -4,11 +4,10 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import Main from "../main";
 import HeaderComponent from "@/components/HeaderComponent";
 import ResizableTextArea from "@/components/ResizableTextArea";
-import { generateUUID } from "@/utils/helpers";
 import { useMessage } from "../context/MessageContext";
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
-  const { setMessages, loadingMessage, messages } = useMessage();
+  const { newMessage, loadingMessage, messages } = useMessage();
 
   const [message, setMessage] = useState("");
 
@@ -22,20 +21,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (message && !loadingMessage) {
-      const msg = {
-        token: generateUUID(),
-        type: "user",
-        message: message,
-      };
-
-      setMessages((prevMessages) => {
-        if (prevMessages) {
-          return [...prevMessages, msg];
-        } else {
-          return [msg];
-        }
-      });
-
+      newMessage("user", message);
       setMessage("");
     }
   };

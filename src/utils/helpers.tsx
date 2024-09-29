@@ -1,5 +1,5 @@
 import { Gallery } from "./interface";
-import crypto from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * Random prompt for home page.
@@ -48,13 +48,13 @@ export function formatDate(dateString: string) {
 export const handleDownload = (showImg: Gallery) => {
   if (!showImg) return;
 
-  const imageUrl = showImg.name.startsWith("http")
-    ? showImg.name
-    : process.env.NEXT_PUBLIC_APP_URL + "/images/" + showImg.name;
+  const imageUrl = showImg.uri.startsWith("http")
+    ? showImg.uri
+    : process.env.NEXT_PUBLIC_APP_URL + "/images/" + showImg.uri;
 
   const link = document.createElement("a");
   link.href = imageUrl;
-  link.download = showImg.name;
+  link.download = showImg.uri;
   link.target = "_blank";
   link.style.display = "hidden";
   document.body.appendChild(link);
@@ -67,11 +67,12 @@ export const handleDownload = (showImg: Gallery) => {
  * @returns string
  */
 export function generateUUID() {
-  return `${crypto.randomBytes(16).toString("hex")}`;
+  const uniqueId = uuidv4();
+  return `${uniqueId}`;
 }
 
 export function APP_URL() {
-  if (process.env.NEXT_PUBLIC_APP_ENV === "local") {
+  if (process.env.NODE_ENV === "development") {
     return process.env.NEXT_PUBLIC_APP_URL_LOCAL;
   } else {
     return process.env.NEXT_PUBLIC_APP_URL;
@@ -79,9 +80,5 @@ export function APP_URL() {
 }
 
 export function APP_ENDPOINT() {
-  if (process.env.NEXT_PUBLIC_APP_ENV === "local") {
-    return process.env.NEXT_PUBLIC_DB_ENDPOINT_LOCAL;
-  } else {
-    return process.env.NEXT_PUBLIC_DB_ENDPOINT;
-  }
+  return APP_URL() + "/api";
 }

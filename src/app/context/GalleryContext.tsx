@@ -8,8 +8,8 @@ import {
   ReactNode,
 } from "react";
 import { Gallery } from "@/utils/interface";
-import { useUser } from "./UserContext";
 import { APP_ENDPOINT } from "@/utils/helpers";
+import { fetcher } from "@/utils/fetcher";
 
 interface GalleryContextProps {
   gallery: Gallery[];
@@ -35,8 +35,6 @@ export const GalleryProvider: React.FC<{ children: ReactNode }> = ({
     "public"
   );
 
-  const { credentials } = useUser();
-
   const getGallery = async (entries = 50) => {
     if (loadingGallery) return;
 
@@ -60,38 +58,25 @@ export const GalleryProvider: React.FC<{ children: ReactNode }> = ({
 
       uris = await new Promise(async (resolve, reject) => {
         try {
-          const response = await fetch(endpoint, {
+          const response = await fetcher(endpoint, {
             method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${credentials}`,
-            },
             cache: "no-store",
           });
 
-          if (response.ok) {
-            const data = await response.json();
-            const ttPage = data.totalPage;
-            if (ttPage && typeof ttPage === "number") {
-              setTotalPageGallery(ttPage);
-            } else {
-              setTotalPageGallery(1);
-            }
-            resolve(data.images);
+          const ttPage = response.totalPage;
+          if (ttPage && typeof ttPage === "number") {
+            setTotalPageGallery(ttPage);
           } else {
-            const errorText = await response.text();
-            reject(
-              new Error(
-                `HTTP error! status: ${response.status}, message: ${errorText}`
-              )
-            );
+            setTotalPageGallery(1);
           }
+          resolve(response.images);
         } catch (uploadError) {
           reject(uploadError);
         }
       });
     } catch (error) {
-      console.log(error);
+      const err = error as Error;
+      console.error("Error: ", err.message);
     } finally {
       if (uris && typeof uris === "object") {
         setGallery((prevGallery) => {

@@ -1,13 +1,13 @@
 export interface Message {
   token: string;
-  type: string;
+  type: "user" | "bot" | "__error";
   message: string | Gallery[];
 }
 
 export interface Gallery {
   id: number | null;
   sub: number | null;
-  name: string;
+  uri: string;
   prompt: string | null;
   token: string;
   created_at: string;

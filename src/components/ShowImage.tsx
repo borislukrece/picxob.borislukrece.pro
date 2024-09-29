@@ -27,9 +27,9 @@ export default function ShowImage() {
   };
 
   const copyLinkToClipboard = () => {
-    if (image && image.name) {
+    if (image && image) {
       navigator.clipboard
-        .writeText(image.name)
+        .writeText(image.uri)
         .then(() => {
           // alert("Image link copied to clipboard!");
         })
@@ -72,8 +72,8 @@ export default function ShowImage() {
               <div className="w-full h-full flex items-center justify-center">
                 <ImageComponent
                   image={image}
-                  src={image.name}
-                  alt={image.name}
+                  src={image.uri}
+                  alt={image.uri}
                   onContextMenu={(e) => e.preventDefault()}
                   onClick={() => setDisplay(!display)}
                   width="1024"

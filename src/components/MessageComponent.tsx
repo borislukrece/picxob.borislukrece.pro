@@ -65,7 +65,7 @@ export default function MessageComponent({ message }: { message?: Message }) {
                           width="1024"
                           height="1024"
                           alt="Image generated"
-                          src={value.name}
+                          src={value.uri}
                           crop={{
                             type: "auto",
                             source: true,

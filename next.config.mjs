@@ -16,14 +16,6 @@ const nextConfig = {
     };
     return config;
   },
-  async rewrites() {
-    return [
-      {
-        source: "/backend/api/:path*",
-        destination: "http://localhost:4000/api/:path*",
-      },
-    ];
-  },
 };
 
 export default nextConfig;

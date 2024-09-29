@@ -1,3 +1,4 @@
+import { DB_DATA } from "@/utils/helpers";
 import {
   createPool,
   Pool,
@@ -7,12 +8,14 @@ import {
 
 type Props = string | [string, (string | number | boolean)[]];
 
+const DATABASE_DATA = DB_DATA();
+
 // Use a connection pool
 const pool: Pool = createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: DATABASE_DATA.DB_HOST,
+  user: DATABASE_DATA.DB_USER,
+  password: DATABASE_DATA.DB_PASSWORD,
+  database: DATABASE_DATA.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

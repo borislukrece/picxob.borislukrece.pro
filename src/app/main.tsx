@@ -3,6 +3,7 @@
 import MenuComponent from "@/components/MenuComponent";
 import ShowImage from "@/components/ShowImage";
 import { useSidebar } from "./context/SidebarContext";
+import React from "react";
 
 export default function Main({ children }: { children: React.ReactNode }) {
   const { menuVisible } = useSidebar();

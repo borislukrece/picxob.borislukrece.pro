@@ -7,6 +7,7 @@ import { useGallery } from "@/app/context/GalleryContext";
 import { useGrid } from "@/app/context/GridContext";
 import { useImage } from "@/app/context/ImageContext";
 import { useEffect, useState } from "react";
+import React from "react";
 
 export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
   const { loadingGallery } = useGallery();

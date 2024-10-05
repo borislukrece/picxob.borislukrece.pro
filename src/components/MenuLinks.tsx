@@ -9,6 +9,7 @@ import { useSidebar } from "@/app/context/SidebarContext";
 import { useGrid } from "@/app/context/GridContext";
 import { useGallery } from "@/app/context/GalleryContext";
 import { useUser } from "@/app/context/UserContext";
+import React from "react";
 
 export default function MenuLinks() {
   const { handleSidebar } = useSidebar();

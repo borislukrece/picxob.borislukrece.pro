@@ -7,6 +7,7 @@ import { Message } from "@/utils/interface";
 import { useState } from "react";
 import ImageComponent from "./ImageComponent";
 import { handleDownload } from "@/utils/helpers";
+import React from "react";
 
 export default function MessageComponent({ message }: { message?: Message }) {
   const [isBot] = useState(
@@ -95,7 +96,7 @@ export default function MessageComponent({ message }: { message?: Message }) {
         </div>
         <div className="flex-1 flex items-end">
           <div className="min-h-10 flex items-center px-2 mx-2 rounded-r-[5rem] rounded-tl-[5rem]">
-            <div className="bg-white w-4 h-4 rounded-full"></div>
+            <div className="bg-[var(--foreground-nosys)] w-4 h-4 rounded-full"></div>
           </div>
         </div>
       </div>

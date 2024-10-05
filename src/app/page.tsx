@@ -6,6 +6,7 @@ import MessageComponent from "@/components/MessageComponent";
 import Logo from "@/components/Icon/Logo";
 import { getRandomPrompt } from "@/utils/helpers";
 import { useMessage } from "./context/MessageContext";
+import React from "react";
 
 export default function Home() {
   const { messages, loadingMessage } = useMessage();

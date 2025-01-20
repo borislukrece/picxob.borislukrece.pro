@@ -1,4 +1,4 @@
-// File: C:\Users\hp\Desktop\projects\picxob.borislukrece.com\picxob\src\app\page.tsx
+// File: C:\Users\Chelovek\Desktop\website.online\picxob.borislukrece.pro\src\app\page.tsx
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

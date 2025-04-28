@@ -3,16 +3,16 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: "*",
+        protocol: "https",
+        hostname: "**",
       },
     ],
   },
-  // reactStrictMode: false,
-  webpack: (config, {}) => {
+  trailingSlash: true,
+  webpack: (config) => {
     config.experiments = {
       ...config.experiments,
-      asyncWebAssembly: false,
-      syncWebAssembly: false,
+      topLevelAwait: true,
     };
     return config;
   },

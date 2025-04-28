@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import { getUser } from "../../../../lib/GoogleClient";
 import { TokenPayload } from "google-auth-library";
 import { generateUUID } from "@/utils/helpers";
-import { post } from "../../../../backend/config/database";
 import { Buffer } from "buffer";
-import cloudinary from "../../../../lib/Cloudinary";
+import { getUser } from "@/libs/google-client";
+import cloudinary from "@/libs/cloudinary-client";
+import prisma from "@/libs/prisma";
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,6 +22,26 @@ export async function POST(request: NextRequest) {
     const sub = user ? user.sub : null;
     const uuid = generateUUID();
     const cleanedPrompt = prompt.trim().substring(0, 880);
+
+    const exist = await prisma.images.findFirst({
+      where: {
+        sub: sub,
+        prompt: cleanedPrompt,
+      },
+      select: {
+        id: true,
+        sub: true,
+        uri: true,
+        prompt: true,
+        token: true,
+        createdAt: true,
+        updatedAt: true
+      },
+    });
+
+    if (exist) {
+      return Response.json({ image: exist }, { status: 201 });
+    }
 
     const IAResponse = await fetch(
       "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
@@ -74,19 +94,25 @@ export async function POST(request: NextRequest) {
       prompt: cleanedPrompt,
     };
 
-    const image = await post(
-      [
-        "INSERT INTO images (sub, uri, prompt, token) VALUES (?, ?, ?, ?)",
-        [data.sub, data.uri, data.prompt, data.token],
-      ],
-      "images"
-    );
+    const createdImage = await prisma.images.create({
+      data: {
+        sub: data.sub,
+        token: data.token,
+        uri: data.uri,
+        prompt: data.prompt,
+      },
+      select: {
+        id: true,
+        sub: true,
+        uri: true,
+        prompt: true,
+        token: true,
+        createdAt: true,
+        updatedAt: true
+      },
+    });
 
-    if (image) {
-      return Response.json({ image }, { status: 201 });
-    } else {
-      throw new Error("An unexpected error occurred while saving the image");
-    }
+    return Response.json({ image: createdImage }, { status: 201 });
   } catch (error) {
     const err = error as Error;
     return Response.json(

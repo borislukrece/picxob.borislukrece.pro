@@ -10,8 +10,8 @@ export interface Gallery {
   uri: string;
   prompt: string | null;
   token: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface User {

@@ -72,31 +72,9 @@ export function generateUUID() {
 }
 
 export function APP_URL() {
-  if (process.env.NODE_ENV === "development") {
-    return process.env.NEXT_PUBLIC_APP_URL_LOCAL;
-  } else {
-    return process.env.NEXT_PUBLIC_APP_URL;
-  }
+  return process.env.NEXT_PUBLIC_APP_URL;
 }
 
 export function APP_ENDPOINT() {
   return APP_URL() + "/api";
-}
-
-export function DB_DATA() {
-  if (process.env.NODE_ENV === "development") {
-    return {
-      DB_HOST: process.env.DB_HOST_LOCAL,
-      DB_USER: process.env.DB_USER_LOCAL,
-      DB_NAME: process.env.DB_NAME_LOCAL,
-      DB_PASSWORD: process.env.DB_PASSWORD_LOCAL,
-    };
-  } else {
-    return {
-      DB_HOST: process.env.DB_HOST,
-      DB_USER: process.env.DB_USER,
-      DB_NAME: process.env.DB_NAME,
-      DB_PASSWORD: process.env.DB_PASSWORD,
-    };
-  }
 }

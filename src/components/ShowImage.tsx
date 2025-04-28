@@ -74,7 +74,7 @@ export default function ShowImage() {
                   image={image}
                   src={image.uri}
                   alt={image.uri}
-                  onContextMenu={(e) => e.preventDefault()}
+                  onContextMenu={(e: { preventDefault: () => any; }) => e.preventDefault()}
                   onClick={() => setDisplay(!display)}
                   width="1024"
                   height="1024"
@@ -85,9 +85,8 @@ export default function ShowImage() {
                 />
               </div>
               <div
-                className={`w-full absolute top-0 left-0 transition-all duration-150 ${
-                  !display && "hidden"
-                }`}>
+                className={`w-full absolute top-0 left-0 transition-all duration-150 ${!display && "hidden"
+                  }`}>
                 <div className="w-full py-2 flex justify-between items-center">
                   <div className="px-4">
                     <div className="text-sm text-gray-500 bg-[var(--menu-background)] rounded-md px-2 py-1">
@@ -107,9 +106,8 @@ export default function ShowImage() {
                 </div>
               </div>
               <div
-                className={`w-full absolute bottom-6 px-4 transition-all duration-150 ${
-                  !display && "hidden"
-                }`}>
+                className={`w-full absolute bottom-6 px-4 transition-all duration-150 ${!display && "hidden"
+                  }`}>
                 <div className="bg-[var(--menu-background)] shadow-lg dark:shadow-none shadow-black/[0.150] dark:shadow-white/[0.150] rounded-lg p-2">
                   <div className="w-ful flex justify-between">
                     <div className="flex items-center flex-wrap gap-2">
@@ -125,9 +123,8 @@ export default function ShowImage() {
                         onMouseUp={handleMouseUp}
                         title="Copy link"
                         type="button"
-                        className={`relative bg-[var(--secondary)] text-white px-2 py-2 shadow-md shadow-black/[0.3] backdrop-blur-sm rounded-md transition-all duration-150 delay-75 ${
-                          isCopying ? "ring-2 ring-transparent" : ""
-                        }`}>
+                        className={`relative bg-[var(--secondary)] text-white px-2 py-2 shadow-md shadow-black/[0.3] backdrop-blur-sm rounded-md transition-all duration-150 delay-75 ${isCopying ? "ring-2 ring-transparent" : ""
+                          }`}>
                         <i className="fa-solid fa-link"></i> Copy Link
                         {isCopying && (
                           <span
@@ -147,7 +144,7 @@ export default function ShowImage() {
                         Powered by AI on {process.env.NEXT_PUBLIC_APP_NAME}
                       </div>
                       <div className="text-sm text-slate-400">
-                        {formatDate(image.created_at)}
+                        {formatDate(image.createdAt)}
                       </div>
                     </div>
                   </div>

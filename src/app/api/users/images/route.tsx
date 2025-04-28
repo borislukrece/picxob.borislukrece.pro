@@ -1,9 +1,7 @@
 import { NextRequest } from "next/server";
-import { get } from "../../../../../backend/config/database";
-
-import { OAuth2Client, TokenPayload } from "google-auth-library";
-
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+import { client } from "@/libs/google-client";
+import { TokenPayload } from "google-auth-library";
+import prisma from "@/libs/prisma";
 
 export async function GET(request: NextRequest) {
   try {
@@ -57,25 +55,34 @@ export async function GET(request: NextRequest) {
     const entries = parseInt(searchParams.get("entries") || "50");
     const offset = (page - 1) * entries;
 
-    let images = await get([
-      "SELECT * FROM images WHERE sub = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
-      [user.sub, entries, offset],
+    const [images, totalCount] = await Promise.all([
+      prisma.images.findMany({
+        where: { sub: user.sub },
+        orderBy: { createdAt: 'desc' },
+        take: entries,
+        skip: offset,
+        select: {
+          id: false,
+          sub: true,
+          uri: true,
+          prompt: true,
+          token: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      }),
+      prisma.images.count({
+        where: { sub: user.sub }
+      })
     ]);
 
-    if (!(Array.isArray(images) && images.length > 0)) {
+    if (!images.length) {
       return Response.json({
         totalPage: 0,
         images: [],
       });
     }
 
-    images = images.map((i) => {
-      i.id = null;
-      return i;
-    });
-
-    const totalImages = await get("SELECT COUNT(*) AS count FROM images");
-    const totalCount = Array.isArray(totalImages) ? totalImages[0].count : 0;
     const totalPage = Math.ceil(totalCount / entries);
 
     return Response.json({

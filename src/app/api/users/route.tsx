@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { getUser } from "../../../../lib/GoogleClient";
+import { getUser } from "../../../libs/google-client";
 import { TokenPayload } from "google-auth-library";
 
 export async function GET(request: NextRequest) {

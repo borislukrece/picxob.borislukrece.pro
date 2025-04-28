@@ -28,7 +28,7 @@ export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
         const groupedImages: Record<string, GalleryInterface[]> = {};
 
         images.forEach((image) => {
-          const date = new Date(image.created_at).toLocaleDateString();
+          const date = new Date(image.createdAt).toLocaleDateString();
           if (!groupedImages[date]) {
             groupedImages[date] = [];
           }
@@ -63,9 +63,8 @@ export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
                   </h2>
                 </div>
                 <div
-                  className={`grid ${
-                    grid ? "grid-cols-1" : "grid-cols-3"
-                  } gap-4 px-2`}>
+                  className={`grid ${grid ? "grid-cols-1" : "grid-cols-3"
+                    } gap-4 px-2`}>
                   {groupedImages[date].map((image) => (
                     <button
                       title="Thumbnail"

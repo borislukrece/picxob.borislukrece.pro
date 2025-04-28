@@ -48,11 +48,12 @@ export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
       <div className="w-full">
         <h1 className="font-bold mb-2 px-2 select-none hidden">Gallery</h1>
       </div>
-      {loadingGallery ? (
+      {loadingGallery && (
         <div className="flex items-center justify-center w-full h-full">
           <span className="loader2"></span>
         </div>
-      ) : (
+      )}
+      {!loadingGallery && (
         <>
           {Object.keys(groupedImages).length > 0 ? (
             Object.keys(groupedImages).map((date, index) => (
@@ -98,6 +99,11 @@ export default function Gallery({ gallery }: { gallery: GalleryInterface[] }) {
             </div>
           )}
         </>
+      )}
+      {loadingGallery && (
+        <div className="flex items-center justify-center w-full h-full">
+          <span className="loader2"></span>
+        </div>
       )}
     </div>
   );
